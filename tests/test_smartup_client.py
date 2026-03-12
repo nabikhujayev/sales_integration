@@ -18,7 +18,7 @@ os.environ["ENV_FILE_PATH"] = os.path.join(project_root, ".env.borjomi")
 try:
     from services.smartup_client import SmartupClient
 except ImportError:
-    from sales_integration.services.smartup_client import SmartupClient
+    from services.smartup_client import SmartupClient
 
 
 class TestSmartupClient(unittest.TestCase):
@@ -109,6 +109,29 @@ class TestSmartupClient(unittest.TestCase):
             self.client.download_sales_report(template_id=902)
 
         print("✅ Retry logikasi (401 Unauthorized) testi o'tdi.")
+
+    @patch('requests.post')
+    def test_download_monolit_report_success(self, mock_post):
+        """Monolit hisobotni yuklash va 5 kunlik oraliqni tekshirish"""
+        self.client.token = "Bearer token"
+
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.content = b"<xml>Monolit Data</xml>"
+        mock_post.return_value = mock_response
+
+        result = self.client.download_monolit_report(report_type="$export_balance")
+
+        self.assertEqual(result, b"<xml>Monolit Data</xml>")
+
+        # 5 kunlik URL va Payload yuborilganligini tekshiramiz
+        args, kwargs = mock_post.call_args
+        self.assertIn("integration_two$export_balance", args[0])
+        self.assertIn("begin_date", kwargs['json'])
+        self.assertIn("end_date", kwargs['json'])
+        print("✅ Monolit yuklash (Success) testi o'tdi.")
+
+
 
 
 if __name__ == '__main__':

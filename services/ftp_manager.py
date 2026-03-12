@@ -1,8 +1,8 @@
 import os
 from ftplib import FTP
 from typing import List
-from sales_integration.core.config import settings
-from sales_integration.core.logger import logger
+from core.config import settings
+from core.logger import logger
 
 
 class FTPManager:

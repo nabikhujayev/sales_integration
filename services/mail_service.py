@@ -3,8 +3,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from typing import List
-from sales_integration.core.config import settings
-from sales_integration.core.logger import logger
+from core.config import settings
+from core.logger import logger
 
 class MailService:
     def __init__(self):

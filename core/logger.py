@@ -2,7 +2,7 @@ import logging
 import sys
 import os
 from logging.handlers import RotatingFileHandler
-from sales_integration.core.config import settings
+from core.config import settings
 
 # 1. Logger obyektini olamiz
 logger = logging.getLogger("sales_integration")

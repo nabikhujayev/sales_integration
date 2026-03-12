@@ -4,8 +4,8 @@ import zipfile
 from datetime import datetime, timedelta
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
 
-from sales_integration.core.config import settings
-from sales_integration.core.logger import logger
+from core.config import settings
+from core.logger import logger
 
 
 class SmartupClient:
@@ -133,6 +133,53 @@ class SmartupClient:
             # Agar HTML qaytgan bo'lsa, uni ko'ramiz
             logger.error(f"❌ Полученный файл не является ZIP! Ответ сервера (начало): {file_content[:500]}")
             raise Exception("Сервер не вернул ZIP-файл. Возможно, снова ошибка авторизации.")
+
+        return file_content
+
+    # === YANGI QO'SHILGAN QISM (MONOLIT UCHUN) ===
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_fixed(5),
+        retry=retry_if_exception_type(Exception),
+        reraise=True
+    )
+    def download_monolit_report(self, report_type: str) -> bytes:
+        self._ensure_token()
+
+        # URL ni to'g'rilaymiz (: va /b/ bilan)
+        url = f"{self.base_url}/b/trade/rep/integration/integration_two{report_type}"
+
+        # Bugungi kun (tugash sanasi)
+        end_date_obj = datetime.today()
+        # 4 kun oldingi sana (boshlanish sanasi) - jami 5 kunlik oraliq bo'ladi
+        begin_date_obj = end_date_obj - timedelta(days=4)
+
+        payload = {
+            "begin_date": begin_date_obj.strftime('%d.%m.%Y'),
+            "end_date": end_date_obj.strftime('%d.%m.%Y'),
+            "filial_id": []
+        }
+
+        logger.info(f"📤 Отправка запроса Monolit (Тип: {report_type}, URL: {url})")
+
+        headers = {
+            "Authorization": self.token,
+            "Content-Type": "application/json"
+        }
+
+        # Timeoutni 600 soniya (10 minut) qilib qo'yamiz, Monolit og'ir report bo'lishi mumkin
+        response = requests.post(url, json=payload, headers=headers, timeout=600)
+
+        if response.status_code != 200:
+            error_text = response.text[:300]
+            logger.error(f"❌ Ответ сервера Monolit (Статус {response.status_code}): {error_text}")
+            if response.status_code == 401:
+                self.token = None
+                raise Exception("Authorization Failed - Retrying")
+            raise Exception(f"Ошибка Monolit API: {response.status_code}")
+
+        file_content = response.content
+        logger.info(f"✅ Успешно скачан отчет Monolit ({report_type}), размер: {len(file_content) / 1024:.2f} KB")
 
         return file_content
 

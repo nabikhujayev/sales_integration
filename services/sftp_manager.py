@@ -3,8 +3,8 @@ import os
 import socket
 import time
 from typing import List
-from sales_integration.core.config import settings
-from sales_integration.core.logger import logger
+from core.config import settings
+from core.logger import logger
 
 
 class SFTPManager:
@@ -74,12 +74,35 @@ class SFTPManager:
             try:
                 self._connect()
 
+                # Monolit papkasi allaqachon tekshirildimi yoki yo'qligini bilish uchun belgi
+                monolit_dir_checked = False
+
                 uploaded_count = 0
                 for local_path in file_paths:
                     file_name = os.path.basename(local_path)
-                    remote_full_path = f"{self.remote_path}/{file_name}"
 
-                    logger.info(f"Отправка файла: {file_name}")
+                    # --- O'ZGARISH SHU YERDA: MONOLIT FAYLLAR UCHUN ALOHIDA MANTIQ ---
+                    if file_name.startswith("monolit_"):
+                        monolit_remote_dir = f"{self.remote_path}/monolit"
+
+                        # Papkani faqat bir marta tekshiramiz/yaratamiz
+                        if not monolit_dir_checked:
+                            try:
+                                self.sftp.stat(monolit_remote_dir)
+                            except IOError:
+                                # Agar papka yo'q bo'lsa (IOError), uni yaratamiz
+                                logger.info(f"📁 Папка 'monolit' не найдена на сервере. Создаем: {monolit_remote_dir}")
+                                self.sftp.mkdir(monolit_remote_dir)
+                            monolit_dir_checked = True
+
+                        remote_full_path = f"{monolit_remote_dir}/{file_name}"
+                        logger.info(f"Отправка файла Monolit в отдельную папку: {file_name}")
+                    else:
+                        # Oddiy (saleswork) fayllar uchun eski mantiq
+                        remote_full_path = f"{self.remote_path}/{file_name}"
+                        logger.info(f"Отправка файла: {file_name}")
+
+                    # Faylni serverga joylash
                     self.sftp.put(local_path, remote_full_path)
                     uploaded_count += 1
                     logger.info(f"✅ Успешно отправлен: {file_name}")
@@ -88,7 +111,7 @@ class SFTPManager:
                     logger.info(f"SUCCESS: Все {uploaded_count} файлов загружены на SFTP.")
                     return True
 
-            except (socket.error, paramiko.SSHException, EOFError) as e:
+            except (socket.error, paramiko.SSHException, EOFError, IOError) as e:
                 attempt += 1
                 logger.warning(f"Ошибка соединения (Попытка {attempt}/{max_attempts}): {e}")
                 time.sleep(15)

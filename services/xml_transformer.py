@@ -1,7 +1,7 @@
 import os
 import json
 import xml.etree.ElementTree as ET
-from sales_integration.core.logger import logger
+from core.logger import logger
 
 
 class XMLTransformer:
