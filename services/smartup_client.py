@@ -91,7 +91,7 @@ class SmartupClient:
         if response.status_code != 200:
             try:
                 error_text = response.text
-            except:
+            except Exception:
                 error_text = "Не удалось прочитать"
 
             logger.error(f"❌ Ответ сервера (Статус {response.status_code}): {error_text[:300]}")

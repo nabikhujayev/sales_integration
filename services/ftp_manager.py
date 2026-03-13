@@ -61,7 +61,7 @@ class FTPManager:
             logger.error(f"Ошибка FTP: {e}")
             try:
                 ftp.close()
-            except:
+            except Exception:
                 pass
             return False
 

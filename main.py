@@ -38,8 +38,6 @@ def run_integration(job_type="all"):
         # 1. Tozalash (Jarayon boshida eski temp fayllarni tozalaymiz)
         file_handler.clear_old_backups()
 
-        all_xml_files = []
-
         # =====================================================================
         # 1-QISM: SALESWORK (01:00 da ishlaydi, SFTP/FTP ga yuboradi)
         # =====================================================================

@@ -34,7 +34,7 @@ def run_client(client, job_type):
 
     try:
         # ASOSIY O'ZGARISH: main.py ga job_type ni yuboramiz (masalan: main.py saleswork)
-        result = subprocess.run(
+        subprocess.run(
             [sys.executable, "main.py", job_type],
             env=env,
             check=True,

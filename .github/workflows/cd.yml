@@ -1,0 +1,21 @@
+name: CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker compose build
+
+      - name: Copy docker-compose.yml to server deploy directory
+        run: cp docker-compose.yml /root/sales_integration/docker-compose.yml
+
+      - name: Reload systemd timer
+        run: sudo systemctl restart sales-integration.timer

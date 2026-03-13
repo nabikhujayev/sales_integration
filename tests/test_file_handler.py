@@ -23,7 +23,7 @@ except ImportError:
     try:
         from utils.file_handler import FileHandler
     except ImportError as e:
-        print(f"\n❌ XATOLIK: 'file_handler.py' fayli 'utils' papkasida ekanligiga ishonch hosil qiling.")
+        print("\n❌ XATOLIK: 'file_handler.py' fayli 'utils' papkasida ekanligiga ishonch hosil qiling.")
         raise e
 
 

@@ -44,7 +44,7 @@ class BaltikaClient:
                 return False
 
         except requests.exceptions.Timeout:
-            logger.error(f"❌ Время ожидания ответа от Baltika API истекло (Timeout).")
+            logger.error("❌ Время ожидания ответа от Baltika API истекло (Timeout).")
             return False
         except Exception as e:
             logger.error(f"❌ Сетевая ошибка при отправке на Baltika: {e}")

@@ -8,7 +8,7 @@ project_root = os.path.dirname(current_dir)
 sys.path.insert(0, project_root)
 os.environ["ENV_FILE_PATH"] = os.path.join(project_root, ".env.borjomi")
 
-from services.baltika_client import BaltikaClient
+from services.baltika_client import BaltikaClient  # noqa: E402
 
 
 class TestBaltikaClient(unittest.TestCase):

@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    env:
+      SMARTUP_SERVER_URL: http://localhost
+      SMARTUP_CLIENT_ID: test_client
+      SMARTUP_CLIENT_SECRET: test_secret
+      COMPANY_NAME: TestCompany
+      COMPANY_ID: 1
+      FILIAL_ID: 1
+      TEMPLATE_ID: 1
+      SFTP_SERVER: localhost
+      SFTP_PORT: 22
+      SFTP_USERNAME: test
+      SFTP_PASSWORD: test
+      SFTP_REMOTE_PATH: /tmp
+      EMAIL_SENDER: test@test.com
+      EMAIL_PASSWORD: test
+      EMAIL_RECIPIENTS: test@test.com
+      SMTP_SERVER: localhost
+      SMTP_PORT: 587
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ruff pytest
+
+      - name: Lint with ruff
+        run: ruff check .
+
+      - name: Run tests
+        run: pytest tests/ -v

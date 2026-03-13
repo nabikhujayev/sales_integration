@@ -18,7 +18,7 @@ sys.path.insert(0, project_root)
 os.environ["ENV_FILE_PATH"] = os.path.join(project_root, ".env.borjomi")
 
 # Endi bemalol import qilamiz
-from core.config import Settings
+from core.config import Settings  # noqa: E402
 
 class TestConfig(unittest.TestCase):
     """

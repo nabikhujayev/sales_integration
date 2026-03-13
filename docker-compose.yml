@@ -1,0 +1,9 @@
+services:
+  sales_integration:
+    build: .
+    image: sales_integration:latest
+    volumes:
+      - /root/sales_integration/envs/.env.sayonar:/sales_integration/.env.sayonar:ro
+      - /root/sales_integration/envs/.env.borjomi:/sales_integration/.env.borjomi:ro
+      - /root/sales_integration/envs/.env.royalstar:/sales_integration/.env.royalstar:ro
+    restart: "no"
