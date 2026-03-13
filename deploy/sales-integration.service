@@ -1,7 +1,0 @@
-[Unit]
-Description=Sales Integration
-
-[Service]
-Type=oneshot
-WorkingDirectory=/root/sales_integration
-ExecStart=/usr/bin/docker compose up

@@ -17,5 +17,7 @@ jobs:
       - name: Copy docker-compose.yml to server deploy directory
         run: cp docker-compose.yml /root/sales_integration/docker-compose.yml
 
-      - name: Reload systemd timer
-        run: sudo systemctl restart sales-integration.timer
+      - name: Reload systemd timers
+        run: |
+          sudo systemctl restart sales-integration-saleswork.timer
+          sudo systemctl restart sales-integration-monolit.timer

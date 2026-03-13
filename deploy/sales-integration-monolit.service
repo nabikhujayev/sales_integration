@@ -1,0 +1,7 @@
+[Unit]
+Description=Sales Integration - Monolit
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/sales_integration
+ExecStart=/usr/bin/docker compose up monolit
